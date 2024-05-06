@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <string_view>
 
 /*
 * 1. Pass by value or const value
@@ -7,6 +8,8 @@
 * 4. C style array as parameter
 * 5. Default arguments
 * 6. The implicit conversion of the function parameter with reference type
+* 7. std::string_view as a parameter
+* 8. constexpr function and consteval function
 */
 
 
@@ -76,3 +79,34 @@ int fn13(const int& a) {
 // because the string literal is a const char array, and the compiler is going to implicitly convert it to a temporary std::string object which is a temporary object.
 // But we can pass the string literal to a function that expects a const reference to std::string object.
 
+// =================================================================
+// 7. std::string_view as a parameter
+// =================================================================
+// The std::string_view is a lightweight, non-owning, read-only view of a string.
+// It is a better alternative to passing a const reference to std::string object.
+// In case where you use a non-const string reference as a parameter, you cannot pass a string literal to that function,
+// then you can use std::string_view as a parameter, the string view is going to accept all kinds of strings, like string literals, std::string objects, and char arrays, even std::string_view objects.
+void fn14(std::string_view str);
+// you can call fn14 with all kinds of strings
+// fn14("Hello, World!");
+// std::string str = "Hello, World!";
+// fn14(str);
+// char str[] = "Hello, World!";
+// fn14(str);
+// std::string_view str = "Hello, World!";
+// fn14(str);
+
+// =================================================================
+// 8. constexpr function and consteval function
+// =================================================================
+// A constexpr function is a function that can potentially be evaluated at compile time,
+// which means that it is possible to be evaluated at runtime.
+constexpr int fn15(int a);
+// when you are storing the result of a constexpr function in a variable, them the varable must be a constexpr so the compiler can evaluate the function at compile time.
+// You can also call a constexpr function with a non-constexpr argument, then the function will be executed at runtime.
+
+// On the other hand, C++20 introduces a new keyword consteval, which is a stronger version of constexpr.
+// It forces the function to be evaluated at compile time, and if it is not possible, then the compiler is going to give you a compiler error.
+consteval int fn16(int a);
+// Since the consteval keyword has already conveyed that the function must be evaluated at compile time,
+// you don't need to store the result of the function in a constexpr variable to make the compiler evaluate the function at compile time.
