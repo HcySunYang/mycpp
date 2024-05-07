@@ -10,6 +10,8 @@
 * 6. The implicit conversion of the function parameter with reference type
 * 7. std::string_view as a parameter
 * 8. constexpr function and consteval function
+* 9. Getting things out of a function using reference parameters, or pointers
+* 10. Getting things out of a function using return by value
 */
 
 
@@ -110,3 +112,32 @@ constexpr int fn15(int a);
 consteval int fn16(int a);
 // Since the consteval keyword has already conveyed that the function must be evaluated at compile time,
 // you don't need to store the result of the function in a constexpr variable to make the compiler evaluate the function at compile time.
+
+// =================================================================
+// 9. Getting things out of a function using reference parameters, or pointers
+// =================================================================
+void fn17(
+  // If the parameter is not meant to be modified, or it is only be read, then it will be better to pass it by const reference.
+  const std::string& a,
+  // If the parameter is not meant to be modified and it is a pointer, then it will be better to pass it by const pointer to const.
+  const int* const b,
+  // The output1 is what the users gets things out of the function by using non-const reference.
+  int& output1,
+  // The output2 is what the users gets things out of the function by using pointer.
+  int* c
+);
+
+// =================================================================
+// 10. Getting things out of a function using return by value
+// =================================================================
+// Return by value is the default way to get things out of a function.
+int fn18(int a, int b) {
+  return a + b;
+}
+// But morden C++ is going to optimeze it as much as possible when returning by value, for example:
+std::string fn19(std::string str1, std::string str2) {
+  auto result {str1 + str2};
+  return result;
+}
+// The compiler is going to optimize the return value by using the move semantics, so the return value is going to be moved to the caller,
+// instead of being copied. Which happens behind the scenes.
