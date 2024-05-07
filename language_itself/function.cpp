@@ -12,6 +12,7 @@
 * 8. constexpr function and consteval function
 * 9. Getting things out of a function using reference parameters, or pointers
 * 10. Getting things out of a function using return by value
+* 11. Return by reference and return by pointer
 */
 
 
@@ -141,3 +142,25 @@ std::string fn19(std::string str1, std::string str2) {
 }
 // The compiler is going to optimize the return value by using the move semantics, so the return value is going to be moved to the caller,
 // instead of being copied. Which happens behind the scenes.
+
+// =================================================================
+// 11. Return by reference and return by pointer
+// =================================================================
+// The reference that is returned by the function most of the time is a reference to one of its parameters.
+int& fn20(int& a, int& b) {
+  return a > b ? a : b;
+}
+// If you want to store the reference returned by the function in a variable, then the variable must be a reference.
+// int& ref = fn20(a, b);
+// Otherwise, you will get a copy of the value that the reference is referring to.
+// int value = fn20(a, b);  // value is a copy of the value that the reference is referring to.
+// Don't return a reference to a local variable, because the local variable is going to be destroyed when the function returns.
+int& fn21(int a, int b) {
+  int c = a + b;
+  return c; // The reference is referring to a local variable, which is going to be destroyed when the function returns.
+}
+// Return by pointer is similar to return by reference, you should not return a pointer to a local variable.
+int* fn22(int a, int b) {
+  int c = a + b;
+  return &c; // The pointer is pointing to a local variable that is going to be destroyed when the function returns.
+}
