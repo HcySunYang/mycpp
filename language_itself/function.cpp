@@ -13,6 +13,7 @@
 * 9. Getting things out of a function using reference parameters, or pointers
 * 10. Getting things out of a function using return by value
 * 11. Return by reference and return by pointer
+* 12. Function return type deduction
 */
 
 
@@ -163,4 +164,32 @@ int& fn21(int a, int b) {
 int* fn22(int a, int b) {
   int c = a + b;
   return &c; // The pointer is pointing to a local variable that is going to be destroyed when the function returns.
+}
+
+// =================================================================
+// 12. Function return type deduction
+// =================================================================
+auto fn23() {
+  // If you have multiple return statements, you must make sure that all of them return the same type.
+  return 10; // The return type of the function is deduced to int
+}
+// Deduce a reference type
+auto& fn24(int& a) {
+  return a; // The return type of the function is deduced to int&
+}
+// You should use another reference variable to store the reference returned by the function.
+// int& ref = fn24(a);
+// Otherwise, you will get a copy of the value that the reference is referring to.
+// int value = fn24(a);  // value is a copy of the value that the reference is referring to.
+// Deduce a const reference type
+const auto& fn25(int& a) {
+  return a; // The return type of the function is deduced to const int&
+}
+// Deduce a pointer type
+auto* fn26(int* a) {
+  return a; // The return type of the function is deduced to int*
+}
+// Deduce a const pointer to const
+const auto* const fn27(int* a) {
+  return a; // The return type of the function is deduced to const int* const
 }
