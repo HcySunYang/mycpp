@@ -14,6 +14,7 @@
 * 10. Getting things out of a function using return by value
 * 11. Return by reference and return by pointer
 * 12. Function return type deduction
+* 13. Function overloading
 */
 
 
@@ -193,3 +194,51 @@ auto* fn26(int* a) {
 const auto* const fn27(int* a) {
   return a; // The return type of the function is deduced to const int* const
 }
+
+// =================================================================
+// 13. Function overloading
+// =================================================================
+// Function overloading is a feature that allows you to define multiple functions with the same name but with different parameters.
+// The compiler is going to choose the right function to call based on the arguments you pass to the function.
+// Function overloading with parameters:
+int fn28(int a) {
+  return a;
+}
+// The const keyword is not considered as a different parameter type,
+// so the following function is going to cause a compilation error because the function is already defined.
+// int fn28(const int a) {
+//   return a;
+// }
+int fn28(double a) { // The function is overloaded with a different parameter type
+  return a;
+}
+int fn28(int a, double b) { // The function is overloaded with a different number of parameters
+  return a + b;
+}
+int fn28(double a, int b) { // The function is overloaded with a different order of parameters
+  return a + b;
+}
+// Function overloading with pointers:
+int fn29(int* a) {
+  return *a;
+}
+// For overloading a function with pointer types, the const keyword is considered as a different parameter type.
+int fn29(const int* a) { // The function is overloaded with a const pointer
+  return *a;
+}
+// The following function is the same as `int fn29(int* a)`
+// Since regardless whether the pointer is const or not, it is just a copy of the passed pointer,
+// so if the following function co-exists with `int fn29(int* a)`, then it is going to cause a compilation error.
+int fn29(int* const a) {
+  return *a;
+}
+// The following function is the same as `int fn29(const int* a)`
+// Since regardless whether the pointer is const or not, it is just a copy of the passed pointer,
+// so if the following function co-exists with `int fn29(const int* a)`, then it is going to cause a compilation error.
+int fn29(const int* const a) {
+  return *a;
+}
+// Function overloading with references:
+int fn30(int& a);
+int fn30(const int& a); // The function is overloaded with a const reference
+int fn30(int&& a); // The function is overloaded with an rvalue reference
