@@ -15,6 +15,7 @@
 * 11. Return by reference and return by pointer
 * 12. Function return type deduction
 * 13. Function overloading
+* 14. Suggests the compiler to inline a function using the `inline` keyword
 */
 
 
@@ -242,3 +243,13 @@ int fn29(const int* const a) {
 int fn30(int& a);
 int fn30(const int& a); // The function is overloaded with a const reference
 int fn30(int&& a); // The function is overloaded with an rvalue reference
+
+// =================================================================
+// 14. Suggests the compiler to inline a function using the `inline` keyword
+// =================================================================
+inline int fn31(int a) {
+  return a;
+}
+// Note that the `inline` keyword is just a suggestion to the compiler to inline the function,
+// the compiler is not forced to inline the function, it is up to the compiler to decide whether to inline the function or not.
+// Inline a function might cause the binary size to increase, because the function is going to be copied to every place where the function is called.
