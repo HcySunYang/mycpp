@@ -49,6 +49,8 @@
     "xstring": "cpp",
     "xtr1common": "cpp",
     "xutility": "cpp",
-    "optional": "cpp"
+    "optional": "cpp",
+    "string_view": "cpp",
+    "string": "cpp"
   }
 }
