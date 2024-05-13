@@ -1,20 +1,25 @@
 #include <iostream>
 #include <optional>
 #include <string>
+#include <cstring>
+
+template <typename T>
+void print(T value) {
+  std::cout << value << std::endl;
+}
+
+template <typename T>
+void print(T* value, T* value2) {
+  std::cout << *value << std::endl;
+  std::cout << *value2 << std::endl;
+  std::cout << std::strcmp(value, value2) << std::endl;
+}
 
 int main() {
 
-  int a {1};
-  std::string str2 {"Hello, World!"};
-  auto lambda9 {[&, str2 = std::move(str2)]() {
-    a++;
-    std::cout << "a: " << a << std::endl;
-    return str2;
-  }};
-  a++;
-  std::cout << lambda9() << std::endl;
-
-  std::cout << "Finished" << std::endl;
+  const char* str = "C";
+  const char* str2 = "B";
+  print(str, str2);
     
     return 0;
 }
