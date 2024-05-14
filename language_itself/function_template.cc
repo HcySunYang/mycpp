@@ -8,6 +8,8 @@
 * 5. Include template into multiple files
 * 6. Abbreviated function templates with 'auto'
 * 7. Template specialization
+* 8. decltype and trailing return type
+* 9. decltype(auto) and the difference between auto and decltype(auto)
 */
 
 // =================================================================
@@ -67,6 +69,8 @@ T add(T a, T b, int c) {
 // The templates are exempt from the one-definition rule.
 // The instances of a template is potentially inlined, and the inline function is also exempt from the ODR,
 // which is why the instances of a template will not volate the one-definition rule, see ord.cpp for more information about the ODR
+// But in fact, you can use decaltype to make it possible to sparate the declaration and definition of the template,
+// see the section "decltype and trailing return type" below.
 
 // =================================================================
 // 6. abbreviated function templates with 'auto'
@@ -92,3 +96,38 @@ template<>
 char* add(char* a, const char* b) {
   return std::strcat(a, b);
 }
+
+// =================================================================
+// 8. decltype and trailing return type
+// =================================================================
+// The decltype keyword is used to deduce the type of an expression at compile time
+// The trailing return type is a syntax that allows you to specify the return type of a function after the parameter list
+template <typename T, typename U>
+auto add(T a, U b) -> decltype(a + b) {
+  return a + b;
+}
+// One benefit of using the trailing return type is that we can split the template into two parts,
+// the first part is the template declaration, and the second part is the template definition,
+// this is useful when the template is too long and you want to separate the declaration and definition
+template<typename T, typename U>
+auto add2(T a, U b) -> decltype(a + b);
+// The definition of the template is in another file as follows:
+template<typename T, typename U>
+auto add2(T a, U b) -> decltype(a + b) {
+  return a + b;
+}
+
+// =================================================================
+// 9. decltype(auto) and the difference between auto and decltype(auto)
+// =================================================================
+template<typename T, typename U>
+decltype(auto) add3(T a, U b) {
+  return a + b;
+}
+// The difference between auto and decltype(auto) is:
+// auto potentially drops the cv-qualifiers and references, while decltype(auto) preserves them:
+// https://stackoverflow.com/questions/21369113/what-is-the-difference-between-auto-and-decltypeauto-when-returning-from-a-fun
+// from The answer that comes from the link above, one interesting explanation is:
+// The auto returns what value-type would be deduced of you assigned the return clause to an auto variable,
+// while the decltype(auto) returns what type you would get if you wrap the return clause in the decltype.
+
