@@ -2,7 +2,7 @@
 
 /*
 * 1. Basic syntax of a function template
-* 2. Multiple type parameters
+* 2. Multiple type parameters and default type parameters
 * 3. References and pointers in function templates
 * 4. Non-template parameters
 * 5. Include template into multiple files
@@ -10,6 +10,8 @@
 * 7. Template specialization
 * 8. decltype and trailing return type
 * 9. decltype(auto) and the difference between auto and decltype(auto)
+* 10. Non-type template parameters
+* 11. Template syntax for lambdas (C++20)
 */
 
 // =================================================================
@@ -36,6 +38,11 @@ R add(T a, U b) {
   return a + b;
 }
 // In fact, this can be simplified by using the 'auto' keyword, see the section "abbreviated function templates with 'auto'" below
+// We can set a default type for a type parameter
+template <typename R = int, typename T, typename U>
+R addition(T a, U b) {
+  return a + b;
+}
 
 // =================================================================
 // 3. References and pointers in function templates
@@ -131,3 +138,29 @@ decltype(auto) add3(T a, U b) {
 // The auto returns what value-type would be deduced of you assigned the return clause to an auto variable,
 // while the decltype(auto) returns what type you would get if you wrap the return clause in the decltype.
 
+// =================================================================
+// 10. Non-type template parameters
+// =================================================================
+// Non-type template parameters are more like normal function parameters
+template<int N, typename T>
+T add4(T a) {
+  return a + N;
+}
+// In C++17 and below, the non-type template parameters can only be integral types,
+// but in C++20, all basic types are allowed, including floating-point types and pointers and references, etc.
+// Since C++20, a class type that only has public members can also be a non-type template parameter
+
+// =================================================================
+// 11. Template syntax for lambdas (C++20)
+// =================================================================
+auto add5 = []<typename T>(T a, T b) {
+  return a + b;
+};
+// Multiple type parameters
+auto add6 = []<typename T, typename U>(T a, U b) {
+  return a + b;
+};
+// auto type deduction for parameters
+auto add7 = [](auto a, auto b) {
+  return a + b;
+};
