@@ -8,6 +8,10 @@
 * 5. Concepts (since C++20) - with the requires clause
 * 6. Concepts - use concept directly in the template parameter list
 * 7. Concepts - use concept with auto
+* 8. Build a concept using type traits
+* 9. Build a concept using requires clause
+* 10. Build a concept using compound requirements
+* 11. Build a concept using nested requirements
 */
 
 // =================================================================
@@ -70,6 +74,18 @@ template<typename T, typename U>
 auto add3_2(T a, U b) requires std::integral<T> && std::floating_point<U> {
   return a + b;
 }
+// With || operator
+template<typename T, typename U>
+auto add3_3(T a, U b) requires std::integral<T> || std::floating_point<U> {
+  return a + b;
+}
+// With inline requires clause
+template<typename T, typename U>
+auto add3_4(T a, U b) requires std::integral<T> && requires {
+  {a + b} -> std::convertible_to<double>;
+} {
+  return a + b;
+}
 
 // =================================================================
 // 6. Concepts - use concept directly in the template parameter list
@@ -87,3 +103,44 @@ auto add4(T a, U b) {
 auto add5(std::integral auto a, std::floating_point auto b) {
   return a + b;
 }
+
+// =================================================================
+// 8. Build a concept using type traits
+// =================================================================
+// You can build a concept using type traits.
+template <typename T>
+concept Integral = std::is_integral_v<T>;
+
+// =================================================================
+// 9. Build a concept using requires clause
+// =================================================================
+template<typename T>
+concept Addable = requires(T a, T b) {
+  // Use normal statements to enforce the constraints
+  // Compiler will not check the value of the statements, instead,
+  // the compiler will check if the statements are valid in syntax.
+  a + b;
+  // Multiple statements are supported
+  a++;
+};
+
+// =================================================================
+// 10. Build a concept using compound requirements
+// =================================================================
+template<typename T>
+concept Addable2 = requires (T a, T b) {
+  // This means that for the given type T, a + b must be valid,
+  // and the result of a + b must be convertible to double.
+  {a + b} -> std::convertible_to<double>;
+  // multiple requirements are supported
+  a++;
+};
+
+// =================================================================
+// 11. Build a concept using nested requirements
+// =================================================================
+template<typename T>
+concept Addable3 = requires (T a) {
+  a++;
+  requires sizeof(T) <= 4; // This will check the value of sizeof(T) <= 4
+};
