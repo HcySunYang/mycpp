@@ -6,5 +6,5 @@
 // - types (programs-defined types, like classes, structs, enums, and typedefs)
 // - inline functions
 // - inline variables
-// - templates
+// - templates (function templates, class templates, variable templates, etc.)
 // - the instances of a template (because they are potentially inlined)

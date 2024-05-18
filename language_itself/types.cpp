@@ -1,6 +1,6 @@
 #include <concepts>
 
-/*
+/**
 * 1. Type aliases
 * 2. decltype
 * 3. type traits: https://en.cppreference.com/w/cpp/header/type_traits
@@ -12,6 +12,7 @@
 * 9. Build a concept using requires clause
 * 10. Build a concept using compound requirements
 * 11. Build a concept using nested requirements
+* 12. Alias template
 */
 
 // =================================================================
@@ -144,3 +145,16 @@ concept Addable3 = requires (T a) {
   a++;
   requires sizeof(T) <= 4; // This will check the value of sizeof(T) <= 4
 };
+
+// =================================================================
+// 12. Alias template
+// =================================================================
+// Alias templates are a way to create a new name for a template.
+template <typename T>
+struct MyStruct {
+  T value;
+};
+template <typename T>
+using MyStructAlias = MyStruct<T>;
+
+MyStructAlias<int> myStructAlias{10};

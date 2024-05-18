@@ -3,6 +3,9 @@
  * 1. Struct - and aggregate initialization
  * 2. Struct - and designated initializers (C++20)
  * 3. Struct - assignment with aggregate initialization and designated initializers
+ * 4. Struct - default member initialization
+ * 5. Struct - nested struct
+ * 6. Struct template
 */
 
 // =================================================================
@@ -33,7 +36,7 @@ MyStruct3 myStruct3_2{.a = 100}; // the member a is initialized to 100 and the m
 // MyStruct3 myStruct3_3{.b{3.14}, .a{10}}; // error will raise, because the order of the designated initializers must match the order of the members in the struct
 
 // =================================================================
-// 3. Struct - assignment with aggregate initialization and designated initializers
+// 3. Struct - assignment with aggregate assignment and designated assignment
 // =================================================================
 struct MyStruct4 {
   int a;
@@ -44,4 +47,59 @@ void wrapper_fn() {
   myStruct4 = {10, 3.14}; // This will do memberwise assignment
   myStruct4 = {.a = 10, .b = 3.14};
   myStruct4 = {.b = 3.14}; // the member a will be assigned to 0
+}
+
+// =================================================================
+// 4. Struct - default member initialization
+// =================================================================
+struct MyStruct5 {
+  int a;  // uninitialized
+  double b{}; // value-initialized, initialized to 0.0
+  int c{10}; // default member initialization, initialized to 10 if not provided
+};
+MyStruct5 myStruct5; // .a = uninitialized, .b = 0.0, .c = 10
+MyStruct5 myStruct5_2{1, 2.3, 4}; // .a = 1, .b = 2.3, .c = 4, explicit initialization value takes precedence over default member initialization
+
+// =================================================================
+// 5. Struct - nested struct
+// =================================================================
+// First, we can use another struct type (or program-defined type) as a member of a struct
+struct Employee {
+  int age{};
+  double salary{};
+};
+struct Company {
+  int employee_count{};
+  Employee CEO{}; // nested struct
+};
+Company myCompany{10, {50, 100000.0}}; // .employee_count = 10, .CEO.age = 50, .CEO.salary = 100000.0
+
+// Second, we can define a struct inside another struct
+struct Company2 {
+  struct Employee2 {
+    int age{};
+    double salary{};
+  };
+  int employee_count{};
+  Employee2 CEO{};
+};
+Company2 myCompany2{10, {50, 100000.0}}; // .employee_count = 10, .CEO.age = 50, .CEO.salary = 100000.0
+
+// =================================================================
+// 6. Struct template
+// =================================================================
+template <typename T, typename U>
+struct MyStruct6 {
+  T a;
+  U b = double; // type template parameter can have a default value
+  int c; // non-template type member
+};
+MyStruct6<int, double> myStruct6{10, 3.14, 100};
+// template struct as a parameter
+template <typename T, typename U>
+void print_struct(const MyStruct6<T, U>& myStruct) {
+  std::cout << myStruct.a << ", " << myStruct.b << ", " << myStruct.c << std::endl;
+}
+void wrapper_fn2() {
+  print_struct(myStruct6);
 }
