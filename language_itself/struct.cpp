@@ -1,3 +1,9 @@
+#include <iostream>
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// All the introduction to struct are also applicable to class, except that struct members are public by default, while class members are private by default.
+// Most of the time, we use structs as an aggregate type so they don't have constructors, destructors that will be used in classes.
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 /**
  * 1. Struct - and aggregate initialization
@@ -6,6 +12,8 @@
  * 4. Struct - default member initialization
  * 5. Struct - nested struct
  * 6. Struct template
+ * 7. Struct - member functions
+ * 8. const struct object
 */
 
 // =================================================================
@@ -103,3 +111,48 @@ void print_struct(const MyStruct6<T, U>& myStruct) {
 void wrapper_fn2() {
   print_struct(myStruct6);
 }
+
+// =================================================================
+// 7. Struct - member functions
+// =================================================================
+struct MyStruct7 {
+  int a;
+  double b;
+  // Member functions are implicitly inlined so they are won't volatile the ODR rule
+  void print() {
+    std::cout << a << ", " << b << std::endl;
+  }
+  // Member function can be overloaded
+  void print(int x) {
+    std::cout << a << ", " << b << ", " << x << std::endl;
+  }
+};
+
+// =================================================================
+// 8. const struct object
+// =================================================================
+struct MyStruct8 {
+  int a;
+  void print() {
+    std::cout << a << std::endl;
+  }
+  void print() const { // const-qualified member function, it is treated as an overload
+    std::cout << a << std::endl;
+  }
+  void print(int x) const {
+    std::cout << a << ", " << x << std::endl;
+  }
+};
+const MyStruct8 myStruct8{10}; // the member a is const-qualified, so it cannot be modified
+// myStruct8.a = 20; // error will raise
+// myStruct8.print(); // error will raise, because the member function print is not const-qualified
+void wrapper_fn3() {
+  myStruct8.print(); // this will call the const-qualified member function print
+}
+// const member function can be called on non-const object
+MyStruct8 myStruct8_2{20};
+void wrapper_fn4() {
+  myStruct8_2.print(3); // will call the const-qualified member function print(int x)
+}
+// Since the const member function call be called on both the const and non-const object,
+// if a member function does not modify the object, it is best to make it const-qualified.
