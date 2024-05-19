@@ -4,17 +4,20 @@
 #include <cstring>
 #include <concepts>
 
-template<typename T>
-concept Addable3 = requires (T a) {
-  a++;
-  requires sizeof(T) <= 4; // This will check the value of sizeof(T) <= 4
+class MyClass3 {
+  public:
+    // Default constructor
+    MyClass3() {
+      std::cout << "Default constructor" << std::endl;
+    }
+    MyClass3(int val = 1): a(val) {
+      std::cout << "Constructor with value: " << val << std::endl;
+    }
+  private:
+    int a{10};
 };
 
-auto add(Addable3 auto a, Addable3 auto b) {
-  return a + b;
-}
-
 int main() {
-  std::cout << add(1.3, 2.5) << std::endl;
-    return 0;
+  MyClass3 myCls3; // Default constructor
+  return 0;
 }

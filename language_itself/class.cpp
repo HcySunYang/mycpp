@@ -3,8 +3,8 @@
 /**
  * 1. Basic class syntax (with members, public and private access specifiers)
  * 2. Access levels work on per-class basis, not per-object basis
- * 3. Constructor - basic syntax
- * 4. Constructor - member initializer list
+ * 3. member initializer list
+ * 4. Constructor - default constructor
 */
 
 // =================================================================
@@ -48,39 +48,13 @@ class MyClass1 {
 // Create an instance of the class
 MyClass1 myClass1;
 
-
 // =================================================================
-// 3. Constructor - basic syntax
+// 3. member initializer list
 // =================================================================
 class MyClass2 {
   public:
-    // We can have multiple constructors so long as they have different parameters
-    MyClass2() {
-      // The downside of this approach is that the member variable a would be updated twice,
-      // once in the uniform initialization list which is going to initialize the member variable a to 0,
-      // and then in the body of the constructor which is going to update the member variable a to 10.
-      a = 10;
-    }
-
-    MyClass2(int val) {
-      // The same downside as the reason explained above
-      a = val;
-    }
-
-    // This is going to initialize the member variable a to 0
-    int a{};
-};
-// Create an instance of the class
-MyClass2 myClass2;
-MyClass2 myClass2_2(20);
-
-// =================================================================
-// 4. Constructor - member initializer list
-// =================================================================
-class MyClass3 {
-  public:
     // The member initializer list is placed after the constructor's parameter list but before the constructor's body.
-    MyClass3(int val) : a(val), b(3.14) {
+    MyClass2(int val) : a(val), b(3.14) {
       // The member variable a is initialized to val
     }
 
@@ -94,3 +68,34 @@ class MyClass3 {
 // not in the order they are listed in the member initializer list.
 // It is best practice to list the members in the member initializer list in the same order they are declared in the class,
 // otherwise you may run into issues especially if the members depend on each other.
+
+// =================================================================
+// 4. Constructor - default constructor
+// =================================================================
+class MyClass3 {
+  public:
+    // Default constructor
+    MyClass3() {
+      std::cout << "Default constructor" << std::endl;
+    }
+
+    // If all of the parameters of a constructor have default value, then it becomes a default constructor,
+    // we can't have more than one default constructor at the same time
+    // MyClass3(int val = 1): a(val) {
+    //   std::cout << "Constructor with value: " << val << std::endl;
+    // }
+
+    // If we don't provide any constructor for the class, the compiler will generate a default constructor for us,
+    // the generated default constructor will be a constructor with no parameters, no member initializer list, and an empty body:
+    // MyClass3(){}
+
+    // If we provide a non-default constructor, the compiler will not generate a default constructor for us,
+    // but we can tell the compiler to generate one for us:
+    // MyClass3() = default;
+
+  private:
+    int a{10};
+};
+void test() {
+  MyClass3 myCls3; // Default constructor
+}
