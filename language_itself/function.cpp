@@ -143,8 +143,7 @@ std::string fn19(std::string str1, std::string str2) {
   auto result {str1 + str2};
   return result;
 }
-// The compiler is going to optimize the return value by using the move semantics, so the return value is going to be moved to the caller,
-// instead of being copied. Which happens behind the scenes.
+// Which behavior is call copy elision, refer to the chapter "Constructor - copy constructor" in language_itself/class.cpp for more details.
 
 // =================================================================
 // 11. Return by reference and return by pointer
