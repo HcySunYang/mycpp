@@ -96,10 +96,10 @@ Company2 myCompany2{10, {50, 100000.0}}; // .employee_count = 10, .CEO.age = 50,
 // =================================================================
 // 6. Struct template
 // =================================================================
-template <typename T, typename U>
+template <typename T, typename U = double>
 struct MyStruct6 {
   T a;
-  U b = double; // type template parameter can have a default value
+  U b; // type template parameter can have a default value
   int c; // non-template type member
 };
 MyStruct6<int, double> myStruct6{10, 3.14, 100};

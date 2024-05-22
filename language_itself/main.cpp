@@ -4,20 +4,13 @@
 #include <cstring>
 #include <concepts>
 
-class MyClass3 {
-  public:
-    // Default constructor
-    MyClass3() {
-      std::cout << "Default constructor" << std::endl;
-    }
-    MyClass3(int val = 1): a(val) {
-      std::cout << "Constructor with value: " << val << std::endl;
-    }
-  private:
-    int a{10};
+template <typename T, typename U>
+struct MyStruct6 {
+  T a;
+  U b; // type template parameter can have a default value
+  int c; // non-template type member
 };
 
 int main() {
-  MyClass3 myCls3; // Default constructor
   return 0;
 }

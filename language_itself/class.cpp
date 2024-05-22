@@ -10,7 +10,10 @@
  * 5. Constructor - parameterized constructor and constructor delegation
  * 6. Constructor - copy constructor
  * 7. Constructor - conversion constructor and explicit keyword
- * 8. Header and source files for class
+ * 8. Destructor
+ * 9. Header and source files for class
+ * 10. Nested types
+ * 11. Static members
 */
 
 // =================================================================
@@ -234,7 +237,21 @@ void test4() {
 }
 
 // =================================================================
-// 8. Header and source files for class
+// 8. Destructor
+// =================================================================
+class MyClass8 {
+ public:
+  // Destructor can call other member functions as the object is still alive when the destructor is called.
+  // If you don't define a destructor, the compiler will generate a default destructor for you, which an empty body.
+  // The static member variables will not be destroyed by the destructor.
+  // If you use std::exit() to terminate the program, the destructors will not be called.
+  ~MyClass8() {
+    std::cout << "Destructor" << std::endl;
+  }
+};
+
+// =================================================================
+// 9. Header and source files for class
 // =================================================================
 // Put the class definition in the header file
 // Path: language_itself/class.h
@@ -244,4 +261,97 @@ GoodClass::GoodClass(double val) : b(val) {
 }
 void GoodClass::DoSomethingComplicated() {
   std::cout << "Doing something complicated" << std::endl;
+}
+
+// =================================================================
+// 10. Nested types
+// =================================================================
+class MyClass10 {
+ public:
+  using NestedType = int;
+  typedef int NestedTypedef;
+
+  // Nested enum
+  enum NestedEnum {
+    A,
+    B,
+    C
+  };
+
+  // Nested class
+  // Nested class can't access the this pointer of the outer class, because the nested class can be instantiated independently of the outer class,
+  // but it can access the private members of the outer class
+  class NestedClass {
+   public:
+    void print(const MyClass10& myCls10) {
+      // We can access the private member a of the object myCls10
+      std::cout << myCls10.a << std::endl;
+    }
+  };
+
+  MyClass10(NestedType val): a(val) {}
+ private:
+  NestedType a{};
+};
+// access the nested type
+MyClass10::NestedType myNestedType{10};
+MyClass10::NestedTypedef myNestedTypedef{20};
+// access the nested enum
+MyClass10::NestedEnum myNestedEnum{MyClass10::A};
+// access the nested class
+void test5() {
+  MyClass10 myCls10{30};
+  MyClass10::NestedClass myNestedClass;
+  myNestedClass.print(myCls10);
+}
+
+// =================================================================
+// 11. Static members
+// =================================================================
+class MyClass11 {
+  public:
+    // In fact, the static member variable is just a global variable that lives inside the scope of the class,
+    // if we define the static member variable in the class definition, it is just a declaration, not a definition,
+    // so we need to define the static member variable outside the class definition
+    static int count;
+    // we can initialize the static member variable in the class definition, but it have to be a const integral type
+    static const int age{23};
+    // or inlined initialization
+    static inline std::string name{"hcy"};
+    // or constexpr
+    // The best practice is to use the inline keyword and the constexpr specifier to define the static member variable in the class definition
+    static constexpr int age3{200};
+
+    // static member function
+    static void print() {
+      std::cout << "Static member function" << std::endl;
+    }
+    // we can also define the static member function outside the class definition
+    static void print_2();
+};
+// define the static member variable outside the class definition,
+// we can also initialize a private static member variable.
+// Note that the following definition need to go in a source file, not in a header file,
+// otherwise, you will get a linker error saying that the static member variable is defined multiple times if you include the header file in multiple source files,
+// or we can use the inline keyword to make it inlined so it will not violate the ODR rule
+int MyClass11::count{100};
+
+// define the static member function outside the class definition, no need to use the static keyword here,
+// but one thing thaht is worth noting is that the static member function defined outside the class definition is not inlined by default,
+// so in order to avoid violating the ODR rule, we should either define it in the source file or use the inline keyword to make it inlined
+void MyClass11::print_2() {
+  std::cout << "Static member function 2" << std::endl;
+}
+
+// Static members are shared among all instances of the class
+void test6() {
+  // The recommended way to access a static member variable is to use the class name with the scope resolution operator
+  MyClass11::count = 10;
+  MyClass11 myCls11;
+  // but we can also access it using the object anyway
+  std::cout << myCls11.count << std::endl; // 10
+  MyClass11 myCls12;
+  std::cout << myCls12.count << std::endl; // 10
+  // We can call the static member function using the class name with the scope resolution operator
+  MyClass11::print();
 }
