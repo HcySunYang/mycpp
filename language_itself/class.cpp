@@ -14,6 +14,8 @@
  * 9. Header and source files for class
  * 10. Nested types
  * 11. Static members
+ * 12. Friend functions
+ * 13. Friend classes
 */
 
 // =================================================================
@@ -354,4 +356,68 @@ void test6() {
   std::cout << myCls12.count << std::endl; // 10
   // We can call the static member function using the class name with the scope resolution operator
   MyClass11::print();
+}
+
+// =================================================================
+// 12. Friend functions
+// =================================================================
+class MyClass13;  // The forward declaration is needed
+class MyClass12 {
+  private:
+    int a{10};
+    // The friend function can access the private members of the class
+    friend void print(const MyClass12& myCls12, const MyClass13& myCls13);  // friend function declaration
+};
+class MyClass13 {
+  private:
+    int a{10};
+    // The friend function can access the private members of the class
+    friend void print(const MyClass12& myCls12, const MyClass13& myCls13);  // friend function declaration
+};
+// a function can be a friend of multiple classes
+void print(const MyClass12& myCls12, const MyClass13& myCls13) {
+  std::cout << myCls12.a << "----" << myCls13.a << std::endl;
+}
+
+// =================================================================
+// 13. Friend classes
+// =================================================================
+class Boy {
+  public:
+    Boy(int val) : age(val) {}
+  private:
+    int age{10};
+    // It serves both as a friend declaration and a class declaration
+    friend class Girl;
+};
+
+class Girl {
+  public:
+    void printBoy(const Boy& boy) {
+      // We can access the private member of Boy
+      std::cout << boy.age << std::endl;
+    }
+};
+
+// We can also make a single member function a friend of another class,
+// The key is to see how it works in the following example, notice that how do we arrange the forward declaration
+// and the implementation of the friend function and the class.
+// But if we put these 2 classes in different files, and separate the declaration and definition, then we don't
+// have to worry about the order of these 2 classes, just need to include the header file of the class that is needed.
+class Apple;
+class Banana {
+  public:
+    void printApple(const Apple& apple);
+};
+class Apple {
+  public:
+    Apple(int val) : price(val) {}
+  private:
+    int price{10};
+    friend void Banana::printApple(const Apple& apple);
+};
+
+void Banana::printApple(const Apple& apple) {
+  // We can access the private member of Apple
+  std::cout << apple.price << std::endl;
 }
