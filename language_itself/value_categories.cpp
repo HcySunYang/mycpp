@@ -7,6 +7,7 @@
  * 4. A rule of thumb for identifying Lvalues and Rvalues
  * 5. Lvalue reference and Lvalue reference to const
  * 6. Rvalue reference and Rvalue reference to const
+ * 7. Xvalue, Prvalue, and Glvalue
 */
 
 // =================================================================
@@ -88,3 +89,25 @@ void test_foo() {
   foo.print(100); // rvalue reference
 }
 // Note that a rvalue reference variable itself is a lvalue.
+
+// =================================================================
+// 7. Xvalue, Prvalue, and Glvalue
+// =================================================================
+// 7.1 An lvalue (so called, historically, because lvalues could appear on the left-hand side of an assignment expression) designates a function or an object.
+// [ Example: If E is an expression of pointer type, then *E is an lvalue expression referring to the object or function to which E points. As another example,
+// the result of calling a function whose return type is an lvalue reference is an lvalue. —end example ]
+
+// 7.2 An xvalue (an “eXpiring” value) also refers to an object, usually near the end of its lifetime (so that its resources may be moved, for example).
+// An xvalue is the result of certain kinds of expressions involving rvalue references (8.3.2).
+// [ Example: The result of calling a function whose return type is an rvalue reference is an xvalue. —end example ]
+
+// 7.3 A glvalue (“generalized” lvalue) is an lvalue or an xvalue.
+
+// 7.4 An rvalue (so called, historically, because rvalues could appear on the right-hand side of an assignment expressions) is an xvalue, a temporary object (12.2) or subobject thereof, or a value that is not associated with an object.
+
+// 7.5 A prvalue (“pure” rvalue) is an rvalue that is not an xvalue.
+// [ Example: The result of calling a function whose return type is not a reference is a prvalue. The value of a literal such as 12, 7.3e5, or true is also a prvalue. —end example ]
+
+//                Gvalue(generalized lvalue)
+//                /    \
+//           Lvalue    Xvalue(expiring value)[a function whose return type is an rvalue reference]
