@@ -296,6 +296,8 @@ MoveDemo<int> createDemo() {
 
 // The five rules of thumb says that one of the copy constructor, copy assignment operator, move constructor, and move assignment operator, destructor is defined or deleted, then all of them should be defined or deleted.
 
+// std::move() can be used in cases where we want to treat an Lvalue as an Rvalue for the purpose of invoking the move constructor or move assignment operator instead of the copy constructor or copy assignment operator.
+
 // =================================================================
 // 9. Destructor
 // =================================================================
