@@ -10,12 +10,13 @@
  * 5. Constructor - parameterized constructor and constructor delegation
  * 6. Constructor - copy constructor
  * 7. Constructor - conversion constructor and explicit keyword
- * 8. Destructor
- * 9. Header and source files for class
- * 10. Nested types
- * 11. Static members
- * 12. Friend functions
- * 13. Friend classes
+ * 8. Constructor - move constructor
+ * 9. Destructor
+ * 10. Header and source files for class
+ * 11. Nested types
+ * 12. Static members
+ * 13. Friend functions
+ * 14. Friend classes
 */
 
 // =================================================================
@@ -239,7 +240,64 @@ void test4() {
 }
 
 // =================================================================
-// 8. Destructor
+// 8. Constructor - move constructor
+// =================================================================
+template<typename T>
+class MoveDemo {
+  public:
+    MoveDemo(T* data_): data(data_) {}
+
+    // It is sometimes desirable to avoid the copy for a move-able object.
+    MoveDemo(const MoveDemo& other) = delete;
+    MoveDemo& operator=(const MoveDemo& other) = delete;
+
+    // Move constructor
+    MoveDemo(MoveDemo&& other) noexcept : data(other.data) {
+      other.data = nullptr;
+    }
+
+    // Move assignment operator
+    MoveDemo& operator=(MoveDemo&& other) noexcept {
+      if (this == &other) {
+        return *this;
+      }
+
+      // release any resource we are holding
+      delete data;
+      // transfer the ownership of the resource
+      data = other.data;
+      other.data = nullptr;
+
+      return *this;
+    }
+
+    ~MoveDemo() {
+      delete data;
+    }
+  private:
+    T* data;
+};
+// When the move constructor is called:
+// When the move constructor and move assignment operator are defined, and the argument for the construction and assignment is an rvalue,
+// most typically a temporary object or a literal.
+// At the opposize, the copy constructor and copy assignment operator will be called:
+// The argument is an Lvalue, or an rvalue but the move constructor and move assignment operator are not defined.
+
+// Aotumatic Lvalue returned by value may be moved instead of copied. (or we can say: An automatic objects returned from a function by value can be moved even if they are Lvalues).
+MoveDemo<int> createDemo() {
+  MoveDemo<int> res {new int{10}};
+  // The res is an automatic object, it is returned by value, so even if it is an Lvalue, it can be moved instead of copied.
+  // But don't forget that the compiler could do copy elision, so the move constructor may not be called at all.
+  return res;
+}
+
+// We can delete the move constructor and move assignment operator to prevent the object from being moved, the syntax is the same as the copy constructor and copy assignment operator.
+// But if we do that, the object may not be copable either in case where the copy elision is not applied.
+
+// The five rules of thumb says that one of the copy constructor, copy assignment operator, move constructor, and move assignment operator, destructor is defined or deleted, then all of them should be defined or deleted.
+
+// =================================================================
+// 9. Destructor
 // =================================================================
 class MyClass8 {
  public:
@@ -253,7 +311,7 @@ class MyClass8 {
 };
 
 // =================================================================
-// 9. Header and source files for class
+// 10. Header and source files for class
 // =================================================================
 // Put the class definition in the header file
 // Path: language_itself/class.h
@@ -266,7 +324,7 @@ void GoodClass::DoSomethingComplicated() {
 }
 
 // =================================================================
-// 10. Nested types
+// 11. Nested types
 // =================================================================
 class MyClass10 {
  public:
@@ -308,7 +366,7 @@ void test5() {
 }
 
 // =================================================================
-// 11. Static members
+// 12. Static members
 // =================================================================
 class MyClass11 {
   public:
@@ -359,7 +417,7 @@ void test6() {
 }
 
 // =================================================================
-// 12. Friend functions
+// 13. Friend functions
 // =================================================================
 class MyClass13;  // The forward declaration is needed
 class MyClass12 {
@@ -380,7 +438,7 @@ void print(const MyClass12& myCls12, const MyClass13& myCls13) {
 }
 
 // =================================================================
-// 13. Friend classes
+// 14. Friend classes
 // =================================================================
 class Boy {
   public:
