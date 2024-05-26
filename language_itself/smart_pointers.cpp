@@ -8,6 +8,7 @@
  * 3. Passing a std::unique_ptr to a function
  * 4. std::shared_ptr
  * 5. std::unique_ptr can be downgraded to std::shared_ptr
+ * 6. std::weak_ptr
 */
 
 // this class is used to test the smart pointers
@@ -109,4 +110,19 @@ void test6() {
   std::shared_ptr<Resource> res2 {std::move(res)};
   // res->sayHello(); // error: res is nullptr
   res2->sayHello();
+}
+
+// =================================================================
+// 6. std::weak_ptr
+// =================================================================
+// std::weak_ptr is used to break the circular reference between shared_ptr, it doesn't increase the reference counter.
+void test7() {
+  std::shared_ptr<Resource> res {new Resource()};
+  std::weak_ptr<Resource> weakRes {res};
+  // weakRes->sayHello(); // error: weak_ptr doesn't have operator->
+
+  // To access the resource managed by the weak_ptr, we should convert it to a shared_ptr first.
+  if (auto sharedRes = weakRes.lock()) {
+    sharedRes->sayHello();
+  }
 }
