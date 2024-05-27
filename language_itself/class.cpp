@@ -1,4 +1,5 @@
 #include <iostream>
+#include <initializer_list>
 
 #include "class.h"
 
@@ -17,6 +18,7 @@
  * 12. Static members
  * 13. Friend functions
  * 14. Friend classes
+ * 15. Support for initializer list
 */
 
 // =================================================================
@@ -480,4 +482,53 @@ class Apple {
 void Banana::printApple(const Apple& apple) {
   // We can access the private member of Apple
   std::cout << apple.price << std::endl;
+}
+
+// =================================================================
+// 15. Support for initializer list
+// =================================================================
+class YourClass {
+  public:
+    YourClass(size_t length) : len(length), a(new int[length]) {}
+
+    // If you provide an initializer list constructor, then it would be better to provide a initializer list assignment operator as well,
+    // and delete the copy constructor and copy assignment operator to prevent the object from being shallow copied.
+    YourClass(const YourClass& other) = delete;
+    YourClass& operator=(const YourClass& other) = delete;
+
+    // The initializer list constructor
+    YourClass(std::initializer_list<int> list): YourClass(list.size()) {
+      size_t i = 0;
+      for (auto& elem : list) {
+        a[i++] = elem;
+      }
+    }
+
+    // The initializer list assignment operator
+    YourClass& operator=(std::initializer_list<int> list) {
+      if (list.size() != len) {
+        delete[] a;
+        a = new int[list.size()];
+        len = list.size();
+      }
+      size_t i = 0;
+      for (auto& elem : list) {
+        a[i++] = elem;
+      }
+      return *this;
+    }
+
+    ~YourClass() {
+      delete[] a;
+    }
+  private:
+    int* a;
+    size_t len;
+};
+
+void test7() {
+  // Will create an array of 5 elements
+  YourClass yourCls(5);
+  // Will create an array of 1 element that is 10
+  YourClass yourCls2{10};
 }
