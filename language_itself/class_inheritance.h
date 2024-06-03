@@ -4,6 +4,8 @@
 /**
  * 1. Basic inheritance
  * 2. Inheritance access specifiers
+ * 3. Changing an inherited member's access specifier
+ * 4. Curiously Recurring Template Pattern (CRTP): https://en.cppreference.com/w/cpp/language/crtp
 */
 
 // Samples
@@ -18,6 +20,7 @@ class SuperClass {
     }
   protected:
     int protectedId_;
+    void protectedMethod() {}
   private:
     int privateId_;
 };
@@ -81,4 +84,56 @@ class C: private SuperClass {
 void test4() {
   C c {1};
   // c.id_; // error
+}
+
+// =================================================================
+// 3. Changing an inherited member's access level
+// =================================================================
+class D : public SuperClass {
+  public:
+    D(int id): SuperClass(id) {}
+    // use the `using` keywork to change the access level of SuperClass::protectedMethod
+    using SuperClass::protectedMethod;
+    // We can use = delete to delete functionality from the base class
+    int getId() = delete;
+  private:
+    // Hiding the functionality of the base class by changing the base class' member from public to private
+    using SuperClass::id_;
+};
+
+void test() {
+  D d(100);
+  d.protectedMethod();  // this is accessible
+  // d.getId(); // error, because it is deleted
+  static_cast<SuperClass>(d).getId(); // this is still accessible
+  d.SuperClass::getId(); // this is still accessible
+  // d.id_; // error, because it is private now
+}
+
+// =================================================================
+// 4. Curiously Recurring Template Pattern (CRTP): https://en.cppreference.com/w/cpp/language/crtp
+// =================================================================
+template <typename T>
+class Base {
+  public:
+    void interface() {
+      // call the derived class' implementation
+      static_cast<T*>(this)->implementation();
+    }
+    void implementation() {
+      std::cout << "Base implementation" << std::endl;
+    }
+};
+
+class Derived : public Base<Derived> {
+  public:
+    void implementation() {
+      std::cout << "Derived implementation" << std::endl;
+    }
+};
+
+void test2() {
+  Derived d;
+  d.interface();  // Derived implementation
+  // If we don't override the implementation function in the derived class, the base class' implementation function will be called, which prints "Base implementation".
 }

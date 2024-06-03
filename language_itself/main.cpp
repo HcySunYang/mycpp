@@ -4,13 +4,28 @@
 #include <cstring>
 #include <concepts>
 
-template <typename T, typename U>
-struct MyStruct6 {
-  T a;
-  U b; // type template parameter can have a default value
-  int c; // non-template type member
+template <typename T>
+class Base {
+  public:
+    void interface() {
+      // call the derived class' implementation
+      static_cast<T*>(this)->implementation();
+    }
+    void implementation() {
+      std::cout << "Base implementation" << std::endl;
+    }
 };
 
+class Derived : public Base<Derived> {
+  public:
+};
+
+void test2() {
+  Derived d;
+  d.interface();
+}
+
 int main() {
+  test2();
   return 0;
 }
