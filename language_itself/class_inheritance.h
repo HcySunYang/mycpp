@@ -4,8 +4,12 @@
 /**
  * 1. Basic inheritance
  * 2. Inheritance access specifiers
- * 3. Changing an inherited member's access specifier
- * 4. Curiously Recurring Template Pattern (CRTP): https://en.cppreference.com/w/cpp/language/crtp
+ * 3. final inheritance
+ * 4. Changing an inherited member's access specifier
+ * 5. Curiously Recurring Template Pattern (CRTP): https://en.cppreference.com/w/cpp/language/crtp
+ * 6. Virtual functions - virtual keyword
+ * 7. Virtual functions - override specifier and final specifier
+ * 8. virtual functions - covariant return types
 */
 
 // Samples
@@ -86,8 +90,15 @@ void test4() {
   // c.id_; // error
 }
 
+// ================================================================
+// 3. Final inheritance
+// ================================================================
+class BaseA {};
+class DerivedA final: public BaseA {};
+// class DerivedB: public DerivedA {};  // error: the DerivedA class is marked as final
+
 // =================================================================
-// 3. Changing an inherited member's access level
+// 4. Changing an inherited member's access level
 // =================================================================
 class D : public SuperClass {
   public:
@@ -111,7 +122,7 @@ void test() {
 }
 
 // =================================================================
-// 4. Curiously Recurring Template Pattern (CRTP): https://en.cppreference.com/w/cpp/language/crtp
+// 5. Curiously Recurring Template Pattern (CRTP): https://en.cppreference.com/w/cpp/language/crtp
 // =================================================================
 template <typename T>
 class Base {
@@ -137,3 +148,97 @@ void test2() {
   d.interface();  // Derived implementation
   // If we don't override the implementation function in the derived class, the base class' implementation function will be called, which prints "Base implementation".
 }
+
+// =================================================================
+// 6. Virtual functions - virtual keyword
+// =================================================================
+class BaseCls {
+  public:
+    BaseCls() {
+      // Don't call virtual function in constructor or destructor
+      // 1. If you call a virtual function in a constructor, the derived class have not been constructed yet, the virtual function will be resolved to the base class' implementation.
+      // 2. If you call a virtual function in a destructor, the derived class have been destructed, the virtual function will be resolved to the base class' implementation.
+    }
+    ~BaseCls() {
+      // Don't call virtual function in constructor or destructor, the same reason as above.
+    }
+    virtual void implementation() {
+      std::cout << "Base implementation" << std::endl;
+    }
+    virtual void implementation2() {
+      std::cout << "Base implementation2" << std::endl;
+    }
+};
+
+class DerivedCls : public BaseCls {
+  public:
+    virtual void implementation() {
+      std::cout << "Derived implementation" << std::endl;
+    }
+    // This is valid even though there is no virtual function called `implementation100` in the base class.
+    // So we don't recommend this approach, instead, we should use override keyword to make sure the function is overriding a virtual function in the base class.
+    virtual void implementation100() {
+      std::cout << "Derived implementation" << std::endl;
+    }
+};
+
+void test3() {
+  DerivedCls d;
+  // The virtual function resolution is only done when that virtual function is called on a `pointer` or `reference` to the base class.
+  BaseCls* b = &d;
+  b->implementation();  // Derived implementation
+  b->implementation2();  // Base implementation2
+}
+
+// =================================================================
+// 7. Virtual functions - override specifier and final specifier
+// =================================================================
+class BaseCls2 {
+  public:
+    virtual void implementation() {
+      std::cout << "Base implementation" << std::endl;
+    }
+    virtual void implementation2() {
+      std::cout << "Base implementation2" << std::endl;
+    }
+};
+
+class DerivedCls2 : public BaseCls2 {
+  public:
+    // The override specifier is used to make sure that the function is overriding a virtual function in the base class.
+    // Otherwise, if the function is not overriding a virtual function in the base class, the compiler will give an error.
+    // The rule of thumb is to use virtual keyword in the base class and override specifier in the derived class.
+    // The override specifier implies that the function is virtual so we don't need to use virtual keyword again.
+    void implementation() override {
+      std::cout << "Derived implementation" << std::endl;
+    }
+    // The final specifier is used to prevent the function from being overridden in the derived class.
+    void implementation2() final {
+      std::cout << "Derived implementation2" << std::endl;
+    }
+};
+
+class DerivedCls3 : public DerivedCls2 {
+  public:
+    // void implementation2() override; // error, because the function is final in the DerivedCls2 class
+};
+
+// =================================================================
+// 8. virtual functions - covariant return types
+// =================================================================
+class BaseCls3 {
+  public:
+    BaseCls3(const BaseCls3& other) {}
+    virtual BaseCls3* clone() {
+      return new BaseCls3(*this);
+    }
+};
+
+class DerivedCls4 : public BaseCls3 {
+  public:
+    DerivedCls4(const DerivedCls4& other) : BaseCls3(other) {}
+    // The return type of the overridden function can be a pointer to the derived class.
+    DerivedCls4* clone() override {
+      return new DerivedCls4(*this);
+    }
+};
