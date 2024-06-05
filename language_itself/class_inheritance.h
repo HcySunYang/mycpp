@@ -10,6 +10,8 @@
  * 6. Virtual functions - virtual keyword
  * 7. Virtual functions - override specifier and final specifier
  * 8. virtual functions - covariant return types
+ * 9. virtual destructors
+ * 10. Pure virtual functions
 */
 
 // Samples
@@ -240,5 +242,50 @@ class DerivedCls4 : public BaseCls3 {
     // The return type of the overridden function can be a pointer to the derived class.
     DerivedCls4* clone() override {
       return new DerivedCls4(*this);
+    }
+};
+
+// =================================================================
+// 9. virtual destructors
+// =================================================================
+class BaseCls4 {
+  public:
+    // We should always make the destructor of the base class virtual if the class is intended to be used as a base class.
+    // If we don't make the destructor virtual, the derived class' destructor will not be called when the derived class is destructed through a pointer to the base class.
+    virtual ~BaseCls4() {
+      std::cout << "BaseCls4 destructor" << std::endl;
+    }
+};
+
+class DerivedCls5 : public BaseCls4 {
+  public:
+    // We don't have to mark it as virtual explicitly,
+    // because if the base class' member function is virtual, the derived class' member function is virtual as well,
+    // regardless of whether we mark it as virtual or not.
+    ~DerivedCls5() = default;
+};
+
+// =================================================================
+// 10. Pure virtual functions
+// =================================================================
+class BaseCls5 {
+  public:
+    // If a class has a pure virtual function, it is called an abstract class, which means that it can't be instantiated,
+    // and it is meant to be used as a base class.
+    // The derived class must override the pure virtual function, otherwise, the derived class is also an abstract class.
+    virtual void implementation() = 0;
+};
+// We can have a definition for the pure virtual function in the base class.
+void BaseCls5::implementation() {
+  std::cout << "BaseCls5 implementation" << std::endl;
+}
+
+class DerivedCls6 : public BaseCls5 {
+  public:
+    // If we don't override the pure virtual function, the derived class is also an abstract class.
+    void implementation() override {
+      // We can call the base class' implementation of the pure virtual function.
+      BaseCls5::implementation();
+      std::cout << "DerivedCls6 implementation" << std::endl;
     }
 };
