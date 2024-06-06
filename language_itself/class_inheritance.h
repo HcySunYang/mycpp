@@ -12,6 +12,9 @@
  * 8. virtual functions - covariant return types
  * 9. virtual destructors
  * 10. Pure virtual functions
+ * 11. Virtual base classes
+ * 12. Object slicing
+ * 13. Dynamic cast
 */
 
 // Samples
@@ -289,3 +292,76 @@ class DerivedCls6 : public BaseCls5 {
       std::cout << "DerivedCls6 implementation" << std::endl;
     }
 };
+
+// =================================================================
+// 11. Virtual base classes
+// =================================================================
+// To fix the diamond problem, we can use virtual inheritance.
+class BaseCls6 {
+  public:
+    int id_;
+    BaseCls6(int id): id_(id) {}
+};
+
+// The DerivedCls7 and DerivedCls8 classes inherit from the BaseCls6 class virtually.
+class DerivedCls7 : virtual public BaseCls6 {
+  public:
+    DerivedCls7(int id): BaseCls6(id) {}
+};
+
+class DerivedCls8 : virtual public BaseCls6 {
+  public:
+    DerivedCls8(int id): BaseCls6(id) {}
+};
+
+// The DerivedCls9 class inherits from the DerivedCls7 and DerivedCls8 classes.
+// The most-derived class is responsible for constructing the virtual base class.
+// The virtual base class is constructed only once, in the normal inheritance, the base class is constructed multiple times.
+class DerivedCls9 : public DerivedCls7, public DerivedCls8 {
+  public:
+    DerivedCls9(int id): BaseCls6(id), DerivedCls7(id), DerivedCls8(id) {}
+};
+
+// =================================================================
+// 12. Object slicing
+// =================================================================
+// Assigning a derived class object to a base class object will slice the derived class object, this process is called object slicing.
+void test4() {
+  DerivedCls9 d(100);
+  BaseCls6 b {d}; // object slicing: only the base part of the derived class object is copied to the base class object, the derived part is sliced off.
+}
+
+// =================================================================
+// 13. Dynamic cast
+// =================================================================
+// The dynamic_cast can be used to cast a base class pointer to a derived class pointer, which is also called downcasting.
+// If the cast is successful, the dynamic_cast returns a pointer to the derived class, otherwise, it returns a nullptr.
+class BaseFoo {
+  public:
+    virtual ~BaseFoo() {}
+};
+
+class DerivedFoo : public BaseFoo {
+  public:
+    virtual ~DerivedFoo() {}
+    void print() {
+      std::cout << "DerivedFoo" << std::endl;
+    }
+};
+
+void test5() {
+  BaseFoo* b = new DerivedFoo();
+  DerivedFoo* d = dynamic_cast<DerivedFoo*>(b);
+  if (d) {
+    d->print();
+  }
+}
+// static_cast can also be used for downcasting, but it doesn't check whether the cast is valid or not. So it is more dangerous than dynamic_cast.
+// static_cast is faster than dynamic_cast because it doesn't do any runtime type checking, you can use it when you are sure that the cast is valid.
+
+// dynamic_cast can also be used to cast a base class reference to a derived class reference,
+// but there is no way to return a null reference, so if the cast is invalid, it throws a std::bad_cast exception.
+
+// dynamic_cast uses the RTTI (Run-Time Type Information) to determine the type of the object at runtime,
+// which incurs some performance overhead, and some compilers allow you to disable RTTI to improve performance,
+// so it is needless to say if you disable RTTI, you can't use dynamic_cast.
