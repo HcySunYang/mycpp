@@ -88,17 +88,14 @@ class StaticArray<bool, 10> {
   // it is completely independent.
   public:
     void set(size_t index) {
-      assert(index >= 0 && index < 10);
       m_array[index] = true;
     }
 
     void reset(size_t index) {
-      assert(index >= 0 && index < 10);
       m_array[index] = false;
     }
 
     bool get(size_t index) {
-      assert(index >= 0 && index < 10);
       return m_array[index];
     }
 
@@ -122,7 +119,6 @@ class StaticArray<double, length> {
 // =================================================================
 template <>
 int& StaticArray<int, 100>::operator[](size_t index) {
-  assert(index >= 0 && index < 100);
   return m_array[index];
 }
 
