@@ -1,11 +1,15 @@
-#include <iostream>
-#include <optional>
-#include <string>
-#include <cstring>
-#include <concepts>
 #include <span>
 #include <array>
 #include <vector>
+#include <iostream>
+
+/**
+ * https://en.cppreference.com/w/cpp/container/span
+ * 
+ * std::span is a non-owning view over a contiguous sequence of objects.
+ */
+
+// A typical use case for std::span is to unify the interface of functions that operate on arrays and containers.
 
 void print_container(std::span<int> s) {
   for (int i : s) {
@@ -42,10 +46,4 @@ void std_span_examples() {
   // std::span from a subsequence of a std::vector
   std::span<int> s5 {v.begin() + 1, 3};
   print_container(s5);
-}
-
-
-int main() {
-  std_span_examples();
-  return 0;
 }
