@@ -128,6 +128,7 @@ void test() {
 
 // =================================================================
 // 5. Curiously Recurring Template Pattern (CRTP): https://en.cppreference.com/w/cpp/language/crtp
+// What is CRTP? In short, CRTP is when a class A has a base class which is a template specialization of the class A itself.
 // =================================================================
 template <typename T>
 class Base {

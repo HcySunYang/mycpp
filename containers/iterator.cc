@@ -35,6 +35,7 @@ void test_iterator() {
   std::advance(it3, 3);
 
   // Next and prev
+  // Not all containers support the it + n and it - n operations. Use std::next and std::prev instead.
   std::vector<int>::iterator it4 { v1.begin() };
   std::vector<int>::iterator next = std::next(it4, 3);
   std::vector<int>::iterator prev = std::prev(it4, 3);
