@@ -16,6 +16,8 @@
 * 12. Function return type deduction
 * 13. Function overloading
 * 14. Suggests the compiler to inline a function using the `inline` keyword
+* 15. Function pointers
+* 16. Functor or function object
 */
 
 
@@ -108,7 +110,7 @@ void fn14(std::string_view str);
 // A constexpr function is a function that can potentially be evaluated at compile time,
 // which means that it is possible to be evaluated at runtime.
 constexpr int fn15(int a);
-// when you are storing the result of a constexpr function in a variable, them the varable must be a constexpr so the compiler can evaluate the function at compile time.
+// when you are storing the result of a constexpr function in a variable, the能 the varable must be a constexpr so the compiler can evaluate the function at compile time.
 // You can also call a constexpr function with a non-constexpr argument, then the function will be executed at runtime.
 
 // On the other hand, C++20 introduces a new keyword consteval, which is a stronger version of constexpr.
@@ -252,3 +254,30 @@ inline int fn31(int a) {
 // Note that the `inline` keyword is just a suggestion to the compiler to inline the function,
 // the compiler is not forced to inline the function, it is up to the compiler to decide whether to inline the function or not.
 // Inline a function might cause the binary size to increase, because the function is going to be copied to every place where the function is called.
+
+// =================================================================
+// 15. Function pointers
+// =================================================================
+void some_fn(int a) {
+  // Do something
+}
+
+void (*ptr_to_some_fn) (int) { some_fn }; // The function pointer is pointing to the function some_fn
+auto ptr_to_some_fn2 {some_fn}; // The same as the above, but uses the auto keyword to deduce the function pointer type
+
+// =================================================================
+// 16. Functor or function object
+// =================================================================
+// A functor is a class that overloads the function call operator `operator()`.
+class Decryptor {
+  public:
+    std::string operator()(std::string str) {
+      // Decrypt the string
+      return str;
+    }
+};
+// You can call the functor like a function
+void test_functor() {
+  Decryptor decryptor;
+  std::string decrypted_str = decryptor("Encrypted string");
+}
