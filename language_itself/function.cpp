@@ -17,7 +17,6 @@
 * 13. Function overloading
 * 14. Suggests the compiler to inline a function using the `inline` keyword
 * 15. Function pointers
-* 16. Functor or function object
 */
 
 
@@ -264,20 +263,3 @@ void some_fn(int a) {
 
 void (*ptr_to_some_fn) (int) { some_fn }; // The function pointer is pointing to the function some_fn
 auto ptr_to_some_fn2 {some_fn}; // The same as the above, but uses the auto keyword to deduce the function pointer type
-
-// =================================================================
-// 16. Functor or function object
-// =================================================================
-// A functor is a class that overloads the function call operator `operator()`.
-class Decryptor {
-  public:
-    std::string operator()(std::string str) {
-      // Decrypt the string
-      return str;
-    }
-};
-// You can call the functor like a function
-void test_functor() {
-  Decryptor decryptor;
-  std::string decrypted_str = decryptor("Encrypted string");
-}

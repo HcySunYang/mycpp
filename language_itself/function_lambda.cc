@@ -5,6 +5,9 @@
 * 1. Basic lambda syntax
 * 2. Capture list
 * 3. Mutable lambda
+* 4. Functor or function object
+* 5. Lambda can be passed to a function that receives a function pointer
+* 6. Capturing the 'this' pointer
 */
 
 void function_lambda() {
@@ -52,5 +55,72 @@ void function_lambda() {
   // =================================================================
   // 3. Mutable lambda
   // =================================================================
-  // TODO: Add mutable lambda example
+  // By default, the lambda is const, you can't modify the captured variables, if you want to modify the captured variables, you have to use the 'mutable' keyword
+  auto lambda11 {[a]() mutable { return a++; }};
+  // this is not a good practice, you should avoid using mutable lambda, it makes the code harder to understand as the captured variables can be modified in different calls to the lambda
+  lambda11(); // Modify 'a'
+  lambda11(); // Modify 'a' again
+  // it introduces side effects, which is not good for the code readability and maintainability
 }
+
+
+// =================================================================
+// 4. Functor or function object
+// =================================================================
+// A functor is a class that overloads the function call operator `operator()`.
+class Decryptor {
+  public:
+    std::string operator()(std::string str) {
+      // Decrypt the string
+      return str;
+    }
+};
+// You can call the functor like a function
+void test_functor() {
+  Decryptor decryptor;
+  std::string decrypted_str = decryptor("Encrypted string");
+}
+// Also check out the build in function object in the header file <functional>:
+// https://en.cppreference.com/w/cpp/utility/functional
+
+// since functor is just a class, it can contain member variables, and you can initialize the member variables in the constructor.
+class Encryptor {
+  public:
+    Encryptor(const std::string key) : key_{key} {}
+    std::string operator()(std::string str) {
+      // Encrypt the string
+      return str + key_;
+    }
+  private:
+    std::string key_;
+};
+void test_functor2() {
+  Encryptor encryptor {"key"};
+  std::string encrypted_str = encryptor("String to encrypt");
+}
+
+// Note that the Lambda is actually modeled behind the scene as a functor or function object
+
+// =================================================================
+// 5. Lambda can be passed to a function that receives a function pointer
+// =================================================================
+void function_that_receives_function_pointer(int (*func)(int, int)) {
+  func(1, 2);
+}
+void test_lambda_as_function_pointer() {
+  function_that_receives_function_pointer([](int a, int b) { return a + b; });
+}
+
+// =================================================================
+// 6. Capturing the 'this' pointer
+// =================================================================
+class MyClass {
+  public:
+    void test() {
+      // Capture the 'this' pointer
+      auto lambda {[this]() { return a; }};
+      lambda();
+    }
+  private:
+    int a {1};
+};
