@@ -1,5 +1,7 @@
 #include <utility>
 #include <string>
+#include <functional>
+#include <array>
 
 /*
 * 1. Basic lambda syntax
@@ -8,6 +10,7 @@
 * 4. Functor or function object
 * 5. Lambda can be passed to a function that receives a function pointer
 * 6. Capturing the 'this' pointer
+* 7. std::function
 */
 
 void function_lambda() {
@@ -124,3 +127,29 @@ class MyClass {
   private:
     int a {1};
 };
+
+// =================================================================
+// 7. std::function
+// =================================================================
+// std::function is a wrapper around a function pointer, a functor, or a lambda
+// It can be used to store a function pointer, a functor, or a lambda in a variable
+// https://en.cppreference.com/w/cpp/utility/functional/function
+int add(int a, int b) {
+  return a + b;
+}
+class Adder {
+  public:
+    int operator()(int a, int b) {
+      return a + b;
+    }
+};
+void test_std_function() {
+  std::array<std::function<int(int, int)>, 3> functions;
+  // store a function pointer
+  functions[0] = add;
+  // store a functor
+  Adder adder;
+  functions[1] = adder;
+  // store a lambda
+  functions[2] = [](int a, int b) { return a + b; };
+}
