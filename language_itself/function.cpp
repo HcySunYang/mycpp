@@ -109,7 +109,7 @@ void fn14(std::string_view str);
 // A constexpr function is a function that can potentially be evaluated at compile time,
 // which means that it is possible to be evaluated at runtime.
 constexpr int fn15(int a);
-// when you are storing the result of a constexpr function in a variable, the能 the varable must be a constexpr so the compiler can evaluate the function at compile time.
+// when you are storing the result of a constexpr function in a variable, the varable must be a constexpr so the compiler can evaluate the function at compile time.
 // You can also call a constexpr function with a non-constexpr argument, then the function will be executed at runtime.
 
 // On the other hand, C++20 introduces a new keyword consteval, which is a stronger version of constexpr.
