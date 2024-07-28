@@ -1,6 +1,9 @@
+#include <mutex>
+
 /**
  * 1. constexpr and constinit
  * 2. thread_local
+ * 3. mutable specifier
  */
 
 // =================================================================
@@ -23,3 +26,24 @@ constinit int x = 10; // constexpr implies constinit, but constinit implies the 
 // thread_local is a keyword that tells the compiler that a variable has thread storage duration,
 // and each thread has its own instance of the variable.
 constinit thread_local int thread_local_var = 10;
+
+// =================================================================
+// 3. mutable specifier
+// =================================================================
+// mutable is a keyword that tells the compiler that a member variable of a class can be modified even if the
+// member function is a const member function. This is useful when you want to cache the result of a computation
+// in a member variable, one common use case is the thread safe counter:
+class Counter {
+  public:
+    int get() const {
+      std::lock_guard<std::mutex> lock(mutex_);
+      return count_;
+    }
+    void increment() const {
+      std::lock_guard<std::mutex> lock(mutex_);
+      ++count_;
+    }
+  private:
+    mutable int count_ {0};
+    mutable std::mutex mutex_;
+};
