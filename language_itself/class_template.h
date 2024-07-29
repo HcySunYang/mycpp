@@ -17,7 +17,7 @@ class Array {
 
     // It is worth noting that inside the class we can use non-templated type name directly, the Array in this case,
     // but outside the class we must use the templated type name, Array<T>, because the Array outside of the class
-    // refers to the non-templated version of a class named Array.
+    // refers to the templated version of a class named Array.
     Array(const Array& arr) = delete;
     Array& operator=(const Array& arr) = delete;
 
