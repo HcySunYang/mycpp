@@ -20,6 +20,21 @@ constexpr int len {10}; // constexpr variable, it can be used as the length of a
 constinit int x = 10; // constexpr implies constinit, but constinit implies the object must be initialized at compile time
 // Search for constexpr in this repo to see the information about constexpr function
 
+// constexpr constructor.
+// By default, only built-in types could be valid constant expressions, with constexpr constructor, we can create
+// a user-defined type that can be used as a constant expression. There are lots of rules to follow to make a constructor
+// constexpr: https://www.ibm.com/docs/en/xl-c-and-cpp-aix/13.1.0?topic=constructors-constexpr-c11
+class Point {
+  public:
+    constexpr Point(int x, int y) : x_(x), y_(y) {}
+    constexpr int x() const { return x_; }
+    constexpr int y() const { return y_; }
+  private:
+    int x_;
+    int y_;
+};
+constexpr Point p {1, 2};
+
 // =================================================================
 // 2. thread_local
 // =================================================================
