@@ -6,6 +6,7 @@
 			"label": "Build with GCC",
 			"command": "C:\\Users\\chunyanghuo\\bin\\mingw64\\bin\\g++.exe",
 			"args": [
+				"-static",
 				"-fdiagnostics-color=always",
 				"-g",
 				"-std=c++20",

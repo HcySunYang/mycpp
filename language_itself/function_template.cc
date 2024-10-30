@@ -12,6 +12,7 @@
 * 9. decltype(auto) and the difference between auto and decltype(auto)
 * 10. Non-type template parameters
 * 11. Template syntax for lambdas (C++20)
+* 12. Variadic templates
 */
 
 // =================================================================
@@ -164,3 +165,21 @@ auto add6 = []<typename T, typename U>(T a, U b) {
 auto add7 = [](auto a, auto b) {
   return a + b;
 };
+
+// =================================================================
+// 12. Variadic templates
+// =================================================================
+// Variadic templates are a feature that allows you to define a template that can take an arbitrary number of arguments
+void print() {
+  std::cout << "I will be called at last" << std::endl;
+}
+
+template<typename T, typename ...Args>
+void print(T val, Args... args) {
+  std::cout << val << std::endl;
+  print(args...);
+}
+
+void test_variadic_templates() {
+  print(1, 2, 3, 4, 5);
+}

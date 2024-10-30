@@ -43,7 +43,7 @@ template <typename T>
 auto add(T a, T b) {
   static_assert(std::is_integral<T>::value, "T must be an integral type");
   // Since C++17
-  // static_assert(std::is_integral_v<T>, "T must be an integral type");
+  static_assert(std::is_integral_v<T>, "T must be an integral type");
   return a + b;
 }
 
